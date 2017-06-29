@@ -1,6 +1,10 @@
 
 package BlueBird;
 
+/**
+ *
+ * @author manuel
+ */
 import javax.swing.JOptionPane;
 
 public class Despatch {
@@ -17,7 +21,7 @@ public class Despatch {
         JOptionPane.showMessageDialog(null, mensaje, "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
     }
     
-    public boolean confirmacion( String mensaje, int respuesta ) {
-        return respuesta == JOptionPane.YES_OPTION;
+    public boolean confirmacion( String mensaje ) {
+        return JOptionPane.showConfirmDialog(null, mensaje, "CONFIRMAR", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;  
     }
 }

@@ -7,5 +7,9 @@ package BlueBird;
  * Dedicado al manejo interno del sistema.
  */
 public class FullBuster {
+    public static Despatch despatch;
     
+    public FullBuster() {
+        despatch = new Despatch();
+    }
 }
