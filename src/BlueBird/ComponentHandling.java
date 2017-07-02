@@ -1,14 +1,16 @@
 
 package BlueBird;
 
-import Conexion.Conexion;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -89,7 +91,7 @@ public class ComponentHandling {
      *
      * @throws SQLException lanza error SQL.
      */
-    public void loadTabla( String consulta, DefaultTableModel modelo) throws SQLException {
+    public void loadTabla( String consulta, DefaultTableModel modelo ) throws SQLException {
         modelo.setRowCount(0);
 
         result = Conexion.consulta(consulta);
@@ -104,7 +106,7 @@ public class ComponentHandling {
     /**
      * DEVUELVE EL ID DE LA BD AL SELECCIONAR UN ITEM DENTRO DEL JCOMBOBOX.
      * 
-     * @param combo: El item dentro del JComboBox.
+     * @param combo: El getSelectedItem() dentro del JComboBox.
      * @return el id seleccionado.
      */
     public String getIdCombo( String combo ) {
@@ -113,8 +115,7 @@ public class ComponentHandling {
         
         for (int i = 0; i < combo.length(); i++) {
             if( combo.charAt(i) == '.' ) { index = i; }
-        }
-        
+        } 
         id = combo.substring(0, index);
         return id;
     }
@@ -131,5 +132,30 @@ public class ComponentHandling {
         result = Conexion.consulta(consulta);
 
         while( result.next() ) combo.addItem(result.getInt(1)+". "+result.getObject(2));
+    }
+    
+    /**
+     * VALIDA EL TIPO DE DATO QUE RECIBE EL JTEXTFIELD QUE SE PASA COMO PARAMETRO
+     * @param opcion: 1: solo se aceptan letras. 2: solo se aceptan numeros. 3: aceptar numeros y letras
+     * @param campo
+     * @param evt
+     * @param limiteCaracteres 
+     */
+    public void validarTextField( int opcion, JTextField campo, KeyEvent evt, int limiteCaracteres ) {
+        switch(opcion) {
+            case 1: //NO ACEPTEN NUMEROS
+                if( Character.isDigit(evt.getKeyChar()) || campo.getText().length() >= limiteCaracteres ) 
+                    evt.consume();
+                break;
+            case 2: //NO ACEPTEN LETRAS
+                if( Character.isLetter(evt.getKeyChar()) || campo.getText().length() >= limiteCaracteres ) 
+                    evt.consume();
+                break;
+            case 3: //ACEPTAR NUMEROS Y LETRAS
+                if( campo.getText().length() >= limiteCaracteres ) 
+                    evt.consume();
+                break;
+        }
+        Toolkit.getDefaultToolkit().beep();
     }
 }

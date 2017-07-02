@@ -8,8 +8,14 @@ package BlueBird;
  */
 public class FullBuster {
     public static Despatch despatch;
+    public static ComponentHandling componentHandling;
+    public static Fecha fecha;
+    public static FormDesign formDesign;
     
     public FullBuster() {
         despatch = new Despatch();
+        componentHandling = new ComponentHandling();
+        fecha = new Fecha();
+        formDesign = new FormDesign();
     }
 }
