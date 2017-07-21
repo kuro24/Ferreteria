@@ -5,23 +5,24 @@ package BlueBird;
  *
  * @author manuel
  */
+import java.awt.Component;
 import javax.swing.JOptionPane;
 
 public class Despatch {
     
-    public void error( String mensaje ) {
-        JOptionPane.showMessageDialog(null, mensaje, "ERROR", JOptionPane.ERROR_MESSAGE);
+    public static void error( Component component, String mensaje ) {
+        JOptionPane.showMessageDialog(component, mensaje, "ERROR", JOptionPane.ERROR_MESSAGE);
     }
     
-    public void afirmacion( String mensaje, String cabecera ) {
-        JOptionPane.showMessageDialog(null, mensaje, cabecera, JOptionPane.INFORMATION_MESSAGE);
+    public static void afirmacion( Component component, String mensaje, String cabecera ) {
+        JOptionPane.showMessageDialog(component, mensaje, cabecera, JOptionPane.INFORMATION_MESSAGE);
     }
     
-    public void advertencia( String mensaje ) {
-        JOptionPane.showMessageDialog(null, mensaje, "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+    public static void advertencia( Component component, String mensaje ) {
+        JOptionPane.showMessageDialog(component, mensaje, "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
     }
     
-    public boolean confirmacion( String mensaje ) {
-        return JOptionPane.showConfirmDialog(null, mensaje, "CONFIRMAR", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;  
+    public static boolean confirmacion( Component component, String mensaje ) {
+        return JOptionPane.showConfirmDialog(component, mensaje, "CONFIRMAR", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;  
     }
 }
