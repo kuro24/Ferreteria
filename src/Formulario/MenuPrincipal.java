@@ -2,6 +2,8 @@
 package Formulario;
 
 import BlueBird.FullBuster;
+import Clase.Empleado;
+import Clase.EmpleadoUsuario;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
@@ -15,11 +17,23 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
     Timer tiempo;
     
+    Empleado empleado;
+    EmpleadoUsuario empleadoUsuario;
+    
     public MenuPrincipal() {
         initComponents();
+    }
+    
+    public MenuPrincipal( EmpleadoUsuario empleadoUsuario ) {
+        initComponents();
+        
+        this.empleadoUsuario = empleadoUsuario;
+        empleado = new Empleado(this.empleadoUsuario.getIdEmpleadoUsuario());
         
         FullBuster.formDesign.designFrame("Menu Principal", this, jPanel1);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        cargarDatosEmpleado();
     }
     
     public class hora implements ActionListener {        
@@ -29,8 +43,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
         }   
     }
     
-    public void cargarFecha() {
-        
+    public void cargarDatosEmpleado() {
+        lblUsuario.setText("Bienvenido: "+empleado.getNombre()+" "+empleado.getApellidoRazonSocial());
+    }
+    
+    public void cerrarFormularioSesion() {
+        if( FullBuster.despatch.confirmacion(this, "¿Esta Seguro que desea Salir del Programa?")) {
+            this.dispose();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -59,6 +79,9 @@ public class MenuPrincipal extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
+            }
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
             }
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -174,6 +197,10 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         tiempo.stop();
     }//GEN-LAST:event_formWindowClosed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        cerrarFormularioSesion();
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

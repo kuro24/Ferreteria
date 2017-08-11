@@ -2,8 +2,9 @@
 package Sesion;
 
 import BlueBird.Conexion;
+import BlueBird.FondoPanel;
 import BlueBird.FullBuster;
-import Clase.Empleado;
+import Clase.EmpleadoUsuario;
 import Formulario.MenuPrincipal;
 import java.awt.Color;
 import java.awt.Font;
@@ -13,22 +14,37 @@ import java.awt.font.TextAttribute;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 public class InicioSesion extends javax.swing.JFrame {
 
     private boolean entroConExito = false;
     
     public InicioSesion() {
-        initComponents();
-        
+        initComponents();       
+        configuracionInicial();
+    }
+    
+    private void configuracionInicial() {
         this.setDefaultCloseOperation(0);
         this.setTitle("INGRESE TITULO INTELIGENTE AQUI!");
         this.setResizable(false);
         
+        FullBuster.formDesign.fontLabel( new JLabel[] {jLabel1, jLabel2} );
+        FullBuster.formDesign.fontButton( new JButton[] {btnConfigurar, btnEntrar, btnRecuperar, btnSalir} );
+        FullBuster.formDesign.fontTextField( new JTextField[] {txtPassword, txtUsuario} );
+        
         linkBoton();
+        
+        FondoPanel fondo = new FondoPanel((int)this.getWidth(), this.getHeight(), "/Imagen/FondoSesion.png");
+        jPanel1.add(fondo);
+        
+        jLabel1.setForeground(Color.WHITE);
+        jLabel2.setForeground(Color.WHITE);
     }
     
     private void linkBoton() {
@@ -38,6 +54,9 @@ public class InicioSesion extends javax.swing.JFrame {
         
         btnConfigurar.setFont(font.deriveFont(atributos));
         btnRecuperar.setFont(font.deriveFont(atributos));
+        
+        btnConfigurar.setForeground(Color.CYAN);
+        btnRecuperar.setForeground(Color.CYAN);
     }
     
     public void cerrarFormularioSesion() {
@@ -72,10 +91,10 @@ public class InicioSesion extends javax.swing.JFrame {
                 usuarioValido = resultado.getInt(1);
             }
             
-            if( usuarioValido == 1 ) {
-                FullBuster.despatch.afirmacion(this, "entro", "entro");
+            if( usuarioValido != 0 ) {
+                EmpleadoUsuario empleado = new EmpleadoUsuario(usuarioValido);
                 
-                MenuPrincipal principal = new MenuPrincipal();
+                MenuPrincipal principal = new MenuPrincipal(empleado);
                 principal.setVisible(true);
                 this.dispose();
             } else {
@@ -113,6 +132,7 @@ public class InicioSesion extends javax.swing.JFrame {
         });
 
         pnlSesion.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        pnlSesion.setOpaque(false);
 
         txtUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -129,6 +149,7 @@ public class InicioSesion extends javax.swing.JFrame {
 
         jLabel2.setText("Contraseña");
 
+        btnEntrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/Aceptar.png"))); // NOI18N
         btnEntrar.setMnemonic('E');
         btnEntrar.setText("Entrar");
         btnEntrar.setToolTipText("Iniciar Sesion");
@@ -138,6 +159,7 @@ public class InicioSesion extends javax.swing.JFrame {
             }
         });
 
+        btnSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/Eliminar.png"))); // NOI18N
         btnSalir.setMnemonic('S');
         btnSalir.setText("Salir");
         btnSalir.setToolTipText("Salir del Programa");
@@ -199,24 +221,24 @@ public class InicioSesion extends javax.swing.JFrame {
             .addGroup(pnlSesionLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlSesionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlSesionLayout.createSequentialGroup()
-                        .addGroup(pnlSesionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnRecuperar)
-                            .addComponent(jLabel1))
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSesionLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
                         .addGroup(pnlSesionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtUsuario)
                             .addComponent(txtPassword)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSesionLayout.createSequentialGroup()
-                        .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 131, Short.MAX_VALUE)
-                        .addComponent(btnEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlSesionLayout.createSequentialGroup()
+                        .addGroup(pnlSesionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnRecuperar)
+                            .addComponent(jLabel1))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSesionLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnConfigurar)))
+                        .addComponent(btnConfigurar))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSesionLayout.createSequentialGroup()
+                        .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
+                        .addComponent(btnEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         pnlSesionLayout.setVerticalGroup(
@@ -278,7 +300,7 @@ public class InicioSesion extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void btnRecuperarMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRecuperarMouseReleased
-        btnRecuperar.setForeground(Color.BLUE);
+        btnRecuperar.setForeground(Color.CYAN);
     }//GEN-LAST:event_btnRecuperarMouseReleased
 
     private void btnRecuperarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRecuperarMousePressed
@@ -290,7 +312,7 @@ public class InicioSesion extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConfigurarMousePressed
 
     private void btnConfigurarMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnConfigurarMouseReleased
-        btnConfigurar.setForeground(Color.BLUE);
+        btnConfigurar.setForeground(Color.CYAN);
     }//GEN-LAST:event_btnConfigurarMouseReleased
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
@@ -305,6 +327,9 @@ public class InicioSesion extends javax.swing.JFrame {
         JPasswordField ptxtPass = new JPasswordField(25);
         
         Object[] obj1 = new Object[] { lblUser, ptxtUser, lblPass, ptxtPass };
+        
+        FullBuster.formDesign.fontLabel( new JLabel[]{lblUser, lblPass});
+        FullBuster.formDesign.fontTextField( new JTextField[]{ptxtUser, ptxtPass});
         
         JOptionPane.showMessageDialog(this, obj1, "CONEXION", JOptionPane.QUESTION_MESSAGE);
         

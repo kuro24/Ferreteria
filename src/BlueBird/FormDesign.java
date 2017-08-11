@@ -3,15 +3,19 @@ package BlueBird;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Toolkit;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -26,6 +30,7 @@ public class FormDesign {
     private static final String URLIMAGEN = "/Imagen/icono.png";
     private static final Color COLOR = Color.WHITE; 
     private static final Dimension PANTALLA = Toolkit.getDefaultToolkit().getScreenSize();
+    private static final String FONT = "Arial";
     
     /**
      * AGREGA TITULO, ICONO Y COLOR DE FONDO A UN JFRAME.
@@ -52,6 +57,7 @@ public class FormDesign {
             apariencia = UIManager.getInstalledLookAndFeels();
             UIManager.setLookAndFeel( apariencia[3].getClassName() );
             SwingUtilities.updateComponentTreeUI(frame);
+            
         } catch( HeadlessException | ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e ) {}
     }
     
@@ -99,7 +105,8 @@ public class FormDesign {
             
             frame.setIconImage(icon);
             frame.setDefaultCloseOperation(0);
-            frame.setTitle(titulo);   
+            frame.setTitle(titulo);  
+            frame.setResizable(false);
             
             //TOMA EL TAMAÑO DE LA RESOLUCION DE PANTALLA PARA AJUSTAR EL JDIALOG
             if( pantallaGrande ) frame.setSize((int)PANTALLA.getWidth()-100, (int)PANTALLA.getHeight()-150);
@@ -108,5 +115,23 @@ public class FormDesign {
             /*ESTABLECER EL COLOR DE FONDO DEL JPANEL*/
             if( panel != null ) panel.setBackground(COLOR);
         } catch( Exception e ) {}
+    }
+    
+    public static void fontLabel( JLabel[] label ) {
+        for ( JLabel thislabel : label ) {
+            thislabel.setFont(new Font(FONT, Font.PLAIN, 14));
+        }
+    }
+    
+    public static void fontButton( JButton[] button ) {
+        for ( JButton thisButton : button ) {
+            thisButton.setFont(new Font(FONT, Font.PLAIN, 14));
+        }
+    }
+    
+    public static void fontTextField( JTextField[] textField ) {
+        for ( JTextField thisText : textField ) {
+            thisText.setFont(new Font(FONT, Font.PLAIN, 14));
+        }
     }
 }
