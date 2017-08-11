@@ -7,6 +7,7 @@ package BlueBird;
  * Dedicado al manejo interno del sistema.
  */
 public class FullBuster {
+    
     public static Despatch despatch;
     public static ComponentHandling componentHandling;
     public static Fecha fecha;

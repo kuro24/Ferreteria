@@ -1,15 +1,26 @@
 
 package Sesion;
 
+import BlueBird.Conexion;
 import BlueBird.FullBuster;
+import Clase.Empleado;
+import Formulario.MenuPrincipal;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.font.TextAttribute;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Map;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 
 public class InicioSesion extends javax.swing.JFrame {
 
+    private boolean entroConExito = false;
+    
     public InicioSesion() {
         initComponents();
         
@@ -44,6 +55,37 @@ public class InicioSesion extends javax.swing.JFrame {
         pnlSesion.setLocation((this.getWidth() / 2) - (pnlSesion.getWidth() / 2), 
                 (this.getHeight() / 2) - (pnlSesion.getHeight() / 2));
     }
+    
+    public void iniciarSesion() throws SQLException, ClassNotFoundException {
+        if( txtUsuario.getText().isEmpty() || txtPassword.getText().isEmpty() ) {
+            FullBuster.despatch.error(this, "No pueden haber campos vacios");
+        } else {
+            entroConExito = true;
+            Conexion conexion = new Conexion();
+            
+            String usuario = txtUsuario.getText();
+            String pass = txtPassword.getText();
+            
+            int usuarioValido = 0;
+            ResultSet resultado = Conexion.consulta("select validar_usuario('"+usuario+"', '"+pass+"')");
+            while( resultado.next() ) {
+                usuarioValido = resultado.getInt(1);
+            }
+            
+            if( usuarioValido == 1 ) {
+                FullBuster.despatch.afirmacion(this, "entro", "entro");
+                
+                MenuPrincipal principal = new MenuPrincipal();
+                principal.setVisible(true);
+                this.dispose();
+            } else {
+                FullBuster.despatch.error(this, "Este usuario no esta registrado");
+                txtUsuario.setText("");
+                txtPassword.setText("");
+                entroConExito = false;
+            }
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -51,14 +93,14 @@ public class InicioSesion extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         pnlSesion = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        txtUsuario = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnEntrar = new javax.swing.JButton();
+        btnSalir = new javax.swing.JButton();
         btnRecuperar = new javax.swing.JButton();
         btnConfigurar = new javax.swing.JButton();
+        txtPassword = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -72,20 +114,36 @@ public class InicioSesion extends javax.swing.JFrame {
 
         pnlSesion.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
+        txtUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtUsuarioActionPerformed(evt);
+            }
+        });
+        txtUsuario.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtUsuarioKeyTyped(evt);
+            }
+        });
+
         jLabel1.setText("Usuario");
 
         jLabel2.setText("Contraseña");
 
-        jButton1.setMnemonic('E');
-        jButton1.setText("Entrar");
-        jButton1.setToolTipText("Iniciar Sesion");
-
-        jButton2.setMnemonic('S');
-        jButton2.setText("Salir");
-        jButton2.setToolTipText("Salir del Programa");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnEntrar.setMnemonic('E');
+        btnEntrar.setText("Entrar");
+        btnEntrar.setToolTipText("Iniciar Sesion");
+        btnEntrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnEntrarActionPerformed(evt);
+            }
+        });
+
+        btnSalir.setMnemonic('S');
+        btnSalir.setText("Salir");
+        btnSalir.setToolTipText("Salir del Programa");
+        btnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalirActionPerformed(evt);
             }
         });
 
@@ -122,6 +180,17 @@ public class InicioSesion extends javax.swing.JFrame {
                 btnConfigurarMouseReleased(evt);
             }
         });
+        btnConfigurar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConfigurarActionPerformed(evt);
+            }
+        });
+
+        txtPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPasswordActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlSesionLayout = new javax.swing.GroupLayout(pnlSesion);
         pnlSesion.setLayout(pnlSesionLayout);
@@ -139,12 +208,12 @@ public class InicioSesion extends javax.swing.JFrame {
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
                         .addGroup(pnlSesionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1)
-                            .addComponent(jTextField2)))
+                            .addComponent(txtUsuario)
+                            .addComponent(txtPassword)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSesionLayout.createSequentialGroup()
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 131, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSesionLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnConfigurar)))
@@ -158,15 +227,15 @@ public class InicioSesion extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(pnlSesionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlSesionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlSesionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(btnEntrar)
+                    .addComponent(btnSalir))
                 .addGap(18, 18, 18)
                 .addComponent(btnConfigurar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -224,13 +293,68 @@ public class InicioSesion extends javax.swing.JFrame {
         btnConfigurar.setForeground(Color.BLUE);
     }//GEN-LAST:event_btnConfigurarMouseReleased
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         cerrarFormularioSesion();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnSalirActionPerformed
+
+    private void btnConfigurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfigurarActionPerformed
+        JLabel lblUser = new JLabel("User:");
+        JLabel lblPass = new JLabel("Password:");
+        
+        JPasswordField ptxtUser = new JPasswordField(25);
+        JPasswordField ptxtPass = new JPasswordField(25);
+        
+        Object[] obj1 = new Object[] { lblUser, ptxtUser, lblPass, ptxtPass };
+        
+        JOptionPane.showMessageDialog(this, obj1, "CONEXION", JOptionPane.QUESTION_MESSAGE);
+        
+        if( ptxtUser.getText().equals("root") && ptxtPass.getText().equals("123") ) {
+            Frame frame = JOptionPane.getFrameForComponent(this);
+            
+            ConfiguracionConexion configuracion = new ConfiguracionConexion(frame, true);
+            configuracion.setVisible(true);
+        } else {
+            FullBuster.despatch.error(this, "Conexion Fallida, Intente de Nuevo");
+        }
+    }//GEN-LAST:event_btnConfigurarActionPerformed
+
+    private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
+        try {
+            if( !entroConExito ) {
+                iniciarSesion();
+            }
+        } catch( SQLException | ClassNotFoundException e ) {
+            FullBuster.despatch.error(this, e.toString());
+        }
+    }//GEN-LAST:event_btnEntrarActionPerformed
+
+    private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
+        try {
+            if( !entroConExito ) {
+                iniciarSesion();
+            }
+        } catch( SQLException | ClassNotFoundException e ) {
+            FullBuster.despatch.error(this, e.toString());
+        }
+    }//GEN-LAST:event_txtUsuarioActionPerformed
+
+    private void txtUsuarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUsuarioKeyTyped
+        FullBuster.componentHandling.validarTextField(3, txtUsuario, evt, 20);
+    }//GEN-LAST:event_txtUsuarioKeyTyped
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         cerrarFormularioSesion();
     }//GEN-LAST:event_formWindowClosing
+
+    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
+        try {
+            if( !entroConExito ) {
+                iniciarSesion();
+            }
+        } catch( SQLException | ClassNotFoundException e ) {
+            FullBuster.despatch.error(this, e.toString());
+        }
+    }//GEN-LAST:event_txtPasswordActionPerformed
 
     /**
      * @param args the command line arguments
@@ -269,14 +393,14 @@ public class InicioSesion extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConfigurar;
+    private javax.swing.JButton btnEntrar;
     private javax.swing.JButton btnRecuperar;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btnSalir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JPanel pnlSesion;
+    private javax.swing.JPasswordField txtPassword;
+    private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 }

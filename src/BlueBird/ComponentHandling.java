@@ -22,7 +22,7 @@ import javax.swing.table.TableColumn;
  */
 public class ComponentHandling {
     
-    ResultSet result;
+    private static ResultSet result;
     
     /**
      * ESTABLECE EL MODELO DE TABLA QUE LLEVARA EL COMPONENTE.
@@ -32,7 +32,7 @@ public class ComponentHandling {
      * @param nombreColumnas: el array de las columnas que conformara la tabla.
      * @return el modelo de tabla preestablecido que se utilizara.
      */
-    public DefaultTableModel setTableModel( JTable tabla, String[] nombreColumnas ) {
+    public static DefaultTableModel setTableModel( JTable tabla, String[] nombreColumnas ) {
         DefaultTableModel modelo = new DefaultTableModel() {
             public boolean isCellEditable( int row, int column ) {
                 return false;
@@ -91,7 +91,7 @@ public class ComponentHandling {
      *
      * @throws SQLException lanza error SQL.
      */
-    public void loadTabla( String consulta, DefaultTableModel modelo ) throws SQLException {
+    public static void loadTabla( String consulta, DefaultTableModel modelo ) throws SQLException {
         modelo.setRowCount(0);
 
         result = Conexion.consulta(consulta);
@@ -109,7 +109,7 @@ public class ComponentHandling {
      * @param combo: El getSelectedItem() dentro del JComboBox.
      * @return el id seleccionado.
      */
-    public String getIdCombo( String combo ) {
+    public static String getIdCombo( String combo ) {
         String id;
         int index = 0;       
         
@@ -127,7 +127,7 @@ public class ComponentHandling {
      * @param consulta: la consulta SQL que cargara los registros de la BD.
      * @exception SQLException lanza error SQL.
      */
-    public void loadComboBox( JComboBox combo, String consulta ) throws SQLException {
+    public static void loadComboBox( JComboBox combo, String consulta ) throws SQLException {
         combo.removeAllItems();
         result = Conexion.consulta(consulta);
 
@@ -141,21 +141,22 @@ public class ComponentHandling {
      * @param evt
      * @param limiteCaracteres 
      */
-    public void validarTextField( int opcion, JTextField campo, KeyEvent evt, int limiteCaracteres ) {
+    public static void validarTextField( int opcion, JTextField campo, KeyEvent evt, int limiteCaracteres ) {
         switch(opcion) {
             case 1: //NO ACEPTEN NUMEROS
                 if( Character.isDigit(evt.getKeyChar()) || campo.getText().length() >= limiteCaracteres ) 
                     evt.consume();
+                    Toolkit.getDefaultToolkit().beep();
                 break;
             case 2: //NO ACEPTEN LETRAS
                 if( Character.isLetter(evt.getKeyChar()) || campo.getText().length() >= limiteCaracteres ) 
                     evt.consume();
+                    Toolkit.getDefaultToolkit().beep();
                 break;
             case 3: //ACEPTAR NUMEROS Y LETRAS
                 if( campo.getText().length() >= limiteCaracteres ) 
                     evt.consume();
                 break;
         }
-        Toolkit.getDefaultToolkit().beep();
     }
 }
