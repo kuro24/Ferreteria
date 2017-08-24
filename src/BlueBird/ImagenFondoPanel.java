@@ -4,13 +4,13 @@ import java.awt.Graphics;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-public class FondoPanel extends JPanel {
+public class ImagenFondoPanel extends JPanel {
     
     //LINK DE LA IMAGEN A AGREGAR
     String url;
     
     /*PANEL DE FONDO PARA EL INICIO DE SESION*/
-    public FondoPanel(int width, int height, String url) {
+    public ImagenFondoPanel(int width, int height, String url) {
         this.url = url;       
         this.setSize(width, height);  //se selecciona el tamaño del panel
     }

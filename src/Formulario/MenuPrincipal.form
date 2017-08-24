@@ -15,6 +15,9 @@
                 <Property name="text" type="java.lang.String" value="Cerrar Sesion"/>
                 <Property name="toolTipText" type="java.lang.String" value="Cerrar sesion actual"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem2ActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
               <Properties>

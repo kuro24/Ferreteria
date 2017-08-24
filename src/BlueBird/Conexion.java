@@ -22,7 +22,9 @@ public class Conexion {
     public static Statement state, state1;
     public static ResultSet result, result1;
     
-    String driver = "org.postgresql.Driver";
+    public static int usuarioConectado;
+    
+    public static final String DRIVER = "org.postgresql.Driver";
    
     public static Connection getConectar() {
         return conectar;
@@ -32,7 +34,12 @@ public class Conexion {
         Conexion.conectar = conectar;
     }
     
-    public Conexion() throws SQLException, ClassNotFoundException {
+    public Conexion() throws SQLException, ClassNotFoundException {   
+        usuarioConectado = 0;
+        inicializarConexion();
+    }//fin del constructor
+    
+    private void inicializarConexion() throws SQLException, ClassNotFoundException {
         String url = null;
         String user = null;
         String pass = null;
@@ -47,23 +54,29 @@ public class Conexion {
             url = (propiedades.getProperty("url"));
             user = (propiedades.getProperty("user"));
             pass = (propiedades.getProperty("pass"));            
-        } catch (FileNotFoundException ex) {            
-            System.out.println(ex);
-        } catch (IOException ex) {
-            System.out.println(ex);
+        } catch (FileNotFoundException ex) { System.out.println(ex);
+        } catch (IOException ex) { System.out.println(ex);
         } finally {
-            try {
-                if (entrada != null) { entrada.close(); }                
+            try { if (entrada != null) { entrada.close(); }                
             } catch (IOException e) { e.printStackTrace(); }
         }     
         
-        Class.forName(driver);
+        Class.forName(DRIVER);
         conectar = DriverManager.getConnection(url, user, pass);
-    }//fin del constructor
+    }
     
-    public static ResultSet consulta(String sql)throws SQLException {
+    public static ResultSet consulta(String sql) throws SQLException {
         state1 = (Statement) conectar.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
         result1 = state1.executeQuery(sql); //aqui hago consultas y devuelvo los resultados
         return result1;
+    }
+    
+    public static boolean validarConexion(String usuario, String pass) throws SQLException, ClassNotFoundException {        
+        ResultSet resultado = consulta("select validar_usuario('"+usuario+"', '"+pass+"')");
+            while( resultado.next() ) {
+                usuarioConectado = resultado.getInt(1);
+                return resultado.getInt(1) != 0;
+            }
+        return false;
     }
 }

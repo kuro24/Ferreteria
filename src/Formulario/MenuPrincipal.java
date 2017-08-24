@@ -2,10 +2,14 @@
 package Formulario;
 
 import BlueBird.FullBuster;
+import BlueBird.ImagenFondoDesktop;
 import Clase.Empleado;
+import Clase.EmpleadoHistorial;
 import Clase.EmpleadoUsuario;
+import Sesion.InicioSesion;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
@@ -24,7 +28,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         initComponents();
     }
     
-    public MenuPrincipal( EmpleadoUsuario empleadoUsuario ) {
+    public MenuPrincipal( EmpleadoUsuario empleadoUsuario ) throws SQLException {
         initComponents();
         
         this.empleadoUsuario = empleadoUsuario;
@@ -32,6 +36,8 @@ public class MenuPrincipal extends javax.swing.JFrame {
         
         FullBuster.formDesign.designFrame("Menu Principal", this, jPanel1);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        jDesktopPane1.setBorder(new ImagenFondoDesktop(jDesktopPane1));
         
         cargarDatosEmpleado();
     }
@@ -43,12 +49,32 @@ public class MenuPrincipal extends javax.swing.JFrame {
         }   
     }
     
-    public void cargarDatosEmpleado() {
-        lblUsuario.setText("Bienvenido: "+empleado.getNombre()+" "+empleado.getApellidoRazonSocial());
+    public final void cargarDatosEmpleado() throws SQLException {
+        lblUsuario.setText(empleado.getNombre()+" "+empleado.getApellidoRazonSocial());
+        
+        EmpleadoHistorial empleadoHistorial = new EmpleadoHistorial();
+        empleadoHistorial.buscarActivo(empleado.getNumEmpleado());
+        
+        lblPermiso.setText("Cargo: "+empleadoHistorial.getCargoLaboral().getNombreCargo());
     }
     
-    public void cerrarFormularioSesion() {
+    public void cerrarFormularioSesion() throws SQLException {
         if( FullBuster.despatch.confirmacion(this, "¿Esta Seguro que desea Salir del Programa?")) {
+            empleadoUsuario.setEnLinea(0);
+            empleadoUsuario.Editar();
+            
+            this.dispose();
+        }
+    }
+    
+    public void cerrarSesionFormularioSesion() throws SQLException {
+        if( FullBuster.despatch.confirmacion(this, "¿Esta Seguro que desea Salir del Programa?")) {
+            empleadoUsuario.setEnLinea(0);
+            empleadoUsuario.Editar();
+            
+            InicioSesion is = new InicioSesion();
+            is.setVisible(true);
+            
             this.dispose();
         }
     }
@@ -149,6 +175,11 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jMenuItem2.setMnemonic('C');
         jMenuItem2.setText("Cerrar Sesion");
         jMenuItem2.setToolTipText("Cerrar sesion actual");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem2);
 
         jMenuItem1.setMnemonic('S');
@@ -186,7 +217,11 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        this.dispose();
+        try {
+            cerrarFormularioSesion();
+        } catch (SQLException ex) {
+            FullBuster.despatch.error(this, ex.toString());
+        }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -199,8 +234,20 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        cerrarFormularioSesion();
+        try {
+            cerrarFormularioSesion();
+        } catch (SQLException ex) {
+            FullBuster.despatch.error(this, ex.toString());
+        }
     }//GEN-LAST:event_formWindowClosing
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        try {
+            cerrarSesionFormularioSesion();
+        } catch (SQLException ex) {
+            FullBuster.despatch.error(this, ex.toString());
+        }
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
      * @param args the command line arguments

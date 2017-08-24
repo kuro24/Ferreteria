@@ -3,12 +3,16 @@ package BlueBird;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -34,12 +38,14 @@ public class ComponentHandling {
      */
     public static DefaultTableModel setTableModel( JTable tabla, String[] nombreColumnas ) {
         DefaultTableModel modelo = new DefaultTableModel() {
+            @Override
             public boolean isCellEditable( int row, int column ) {
                 return false;
             }
         };
         
         DefaultTableCellRenderer color = new DefaultTableCellRenderer() {
+            @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);
                 
@@ -76,6 +82,7 @@ public class ComponentHandling {
         }    
         tabla.setModel(modelo);
         tabla.setRowHeight(27);
+        tabla.setFont(new Font("Arial", Font.PLAIN, 14));
         
         for(int i = 0; i < nombreColumnas.length; i++) {
             tabla.getColumnModel().getColumn(i).setCellRenderer(color);
@@ -136,10 +143,10 @@ public class ComponentHandling {
     
     /**
      * VALIDA EL TIPO DE DATO QUE RECIBE EL JTEXTFIELD QUE SE PASA COMO PARAMETRO
-     * @param opcion: 1: solo se aceptan letras. 2: solo se aceptan numeros. 3: aceptar numeros y letras
-     * @param campo
-     * @param evt
-     * @param limiteCaracteres 
+     * @param opcion 1: SOLO ACEPTAN LETRAS. 2: SOLO ACEPTAN NUMEROS. 3: ACEPTAR NUMERO Y LETRA
+     * @param campo EL OBJETO JTEXTFIELD QUE SE QUIERE VALIDAR
+     * @param evt EL OBJETO KEYEVENT QUE MODIFICARA EL JTEXTFIELD
+     * @param limiteCaracteres LIMITE DE CARACTERES PERMITIDOS DENTRO DEL TEXTFIELD
      */
     public static void validarTextField( int opcion, JTextField campo, KeyEvent evt, int limiteCaracteres ) {
         switch(opcion) {

@@ -2,7 +2,7 @@
 package Sesion;
 
 import BlueBird.Conexion;
-import BlueBird.FondoPanel;
+import BlueBird.ImagenFondoPanel;
 import BlueBird.FullBuster;
 import Clase.EmpleadoUsuario;
 import Formulario.MenuPrincipal;
@@ -11,10 +11,11 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.font.TextAttribute;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
@@ -23,6 +24,12 @@ import javax.swing.JTextField;
 public class InicioSesion extends javax.swing.JFrame {
 
     private boolean entroConExito = false;
+    
+    public final String[] PREGUNTA_SEGURIDAD = new String[]{"¿Lugar de nacimiento de madre o padre?",
+                                                        "¿Nombre de libro favorito?",
+                                                        "¿Personaje ficticio favorito de la infancia?",
+                                                        "¿Enfermedad o reaccion al que es alergico?",
+                                                        "¿Temor mas grande?"};
     
     public InicioSesion() {
         initComponents();       
@@ -40,7 +47,7 @@ public class InicioSesion extends javax.swing.JFrame {
         
         linkBoton();
         
-        FondoPanel fondo = new FondoPanel((int)this.getWidth(), this.getHeight(), "/Imagen/FondoSesion.png");
+        ImagenFondoPanel fondo = new ImagenFondoPanel((int)this.getWidth(), this.getHeight(), "/Imagen/FondoSesion.png");
         jPanel1.add(fondo);
         
         jLabel1.setForeground(Color.WHITE);
@@ -78,32 +85,56 @@ public class InicioSesion extends javax.swing.JFrame {
     public void iniciarSesion() throws SQLException, ClassNotFoundException {
         if( txtUsuario.getText().isEmpty() || txtPassword.getText().isEmpty() ) {
             FullBuster.despatch.error(this, "No pueden haber campos vacios");
-        } else {
+        } else {  
             entroConExito = true;
             Conexion conexion = new Conexion();
-            
+
             String usuario = txtUsuario.getText();
             String pass = txtPassword.getText();
             
-            int usuarioValido = 0;
-            ResultSet resultado = Conexion.consulta("select validar_usuario('"+usuario+"', '"+pass+"')");
-            while( resultado.next() ) {
-                usuarioValido = resultado.getInt(1);
-            }
-            
-            if( usuarioValido != 0 ) {
-                EmpleadoUsuario empleado = new EmpleadoUsuario(usuarioValido);
+            /*VALIDAR SI EL USUARIO CONECTADO EXISTE DENTRO DE LA BD*/
+            if( Conexion.validarConexion(usuario, pass) ) {
+                EmpleadoUsuario empleado = new EmpleadoUsuario(Conexion.usuarioConectado);
                 
-                MenuPrincipal principal = new MenuPrincipal(empleado);
-                principal.setVisible(true);
-                this.dispose();
+                /*EL USUARIO SE ENCUENTRA EN LINEA Y NO DEBE INICIAR SESION EN OTRA ESTACION*/
+                if( empleado.getEnLinea() == 1 ) {
+                    FullBuster.despatch.error(this, "Este usuario ya se ha conectado en otra estacion. \nCierre sesion para poder iniciar sesion en este equipo");
+                } else {
+                    if( empleado.getPrimerInicio() == 1 ) { //SI ES PRIMER INICIO, PEDIRA CAMBIO DE PASSWORD
+                        Frame frame = JOptionPane.getFrameForComponent(this);
+                        PrimerInicioSesion primerInicioSesion = new PrimerInicioSesion(frame, true, empleado);
+                        primerInicioSesion.setVisible(true);
+                        
+                        this.dispose();
+                    } else {
+                        /*SE CAMBIA EL FLAG PARA NO PODER INICIAR SESION*/
+                        empleado.setEnLinea(1);
+                        empleado.Editar();
+
+                        MenuPrincipal principal = new MenuPrincipal(empleado);
+                        principal.setVisible(true);
+                        this.dispose();
+                    }
+                }
             } else {
-                FullBuster.despatch.error(this, "Este usuario no esta registrado");
+                FullBuster.despatch.error(this, "Usuario/Contraseña Incorrecta");
                 txtUsuario.setText("");
                 txtPassword.setText("");
                 entroConExito = false;
             }
         }
+    }
+    
+    public boolean tieneCombinacionNumeroCaracter( String password ) {
+        int cantCaracter = 0;
+        int cantNumero = 0;
+        
+        for (int i = 0; i < password.length(); i++) {
+            if( Character.isDigit(password.charAt(i)) ) cantNumero++;
+            if( Character.isLetter(password.charAt(i)) ) cantCaracter++;
+        }
+        
+        return (cantCaracter != 0) && (cantNumero != 0);
     }
 
     @SuppressWarnings("unchecked")
@@ -185,6 +216,11 @@ public class InicioSesion extends javax.swing.JFrame {
                 btnRecuperarMouseReleased(evt);
             }
         });
+        btnRecuperar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRecuperarActionPerformed(evt);
+            }
+        });
 
         btnConfigurar.setForeground(new java.awt.Color(0, 0, 255));
         btnConfigurar.setMnemonic('C');
@@ -211,6 +247,11 @@ public class InicioSesion extends javax.swing.JFrame {
         txtPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPasswordActionPerformed(evt);
+            }
+        });
+        txtPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPasswordKeyTyped(evt);
             }
         });
 
@@ -380,6 +421,76 @@ public class InicioSesion extends javax.swing.JFrame {
             FullBuster.despatch.error(this, e.toString());
         }
     }//GEN-LAST:event_txtPasswordActionPerformed
+
+    private void btnRecuperarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRecuperarActionPerformed
+        JLabel lblUsuario = new JLabel("Nombre de Usuario:");
+        JLabel lblPregunta = new JLabel("Pregunta de Seguridad:");
+        JLabel lblRespuesta = new JLabel("Respuesta:");
+        JLabel lblNewPass = new JLabel("Ingrese la Nueva Contraseña:");
+        
+        JTextField txtUser = new JTextField(25);
+        JComboBox cmbPregunta = new JComboBox(PREGUNTA_SEGURIDAD);
+        JTextField txtRespuesta = new JTextField(25);
+        JPasswordField txtNewPass = new JPasswordField(25);
+        
+        Object[] obj1 = new Object[] { lblUsuario, txtUser, lblPregunta, cmbPregunta, lblRespuesta, txtRespuesta };
+        
+        FullBuster.formDesign.fontLabel( new JLabel[]{lblUsuario, lblPregunta, lblRespuesta, lblNewPass});
+        FullBuster.formDesign.fontTextField( new JTextField[]{txtUser, txtRespuesta, txtNewPass});
+        FullBuster.formDesign.fontComponents( new JComponent[]{cmbPregunta});
+        
+        JOptionPane.showMessageDialog(this, obj1, "RECUPERACION", JOptionPane.QUESTION_MESSAGE);
+        
+        if( txtUser.getText().equals("") || txtRespuesta.getText().equals("") ) {
+            FullBuster.despatch.error(this, "No pueden haber campos vacios");
+        } else {
+            /*SE BUSCAR EL USUARIO PARA VER SI EXISTE EN LA BD*/
+            try {
+                Conexion conexion = new Conexion();
+
+                EmpleadoUsuario usuario = new EmpleadoUsuario();
+                usuario.buscarPorConcepto(txtUser.getText());
+
+                /*SI EL ID ES DIFERENTE DE CERO QUIERE DECIR QUE EXISTE*/
+                if( usuario.getIdEmpleadoUsuario() != 0 ) {
+                    /*SE VALIDA LA PREGUNTA Y LA RESPUESTA*/
+                    if( usuario.getPreguntaSeguridad() == (cmbPregunta.getSelectedIndex()+1) ) {
+                        /*SE VALIDA QUE LA RESPUESTA SEA CORRECTA*/
+                        if( usuario.getRespuestaSeguridad().equals(txtRespuesta.getText()) ) {
+                            JOptionPane.showMessageDialog(this, new Object[]{lblNewPass,txtNewPass}, "RECUPERACION", JOptionPane.INFORMATION_MESSAGE);
+                            
+                            /*VALIDA QUE LA CONTRASEÑA LLEVE NUMEROS Y LETRAS*/
+                            if( tieneCombinacionNumeroCaracter(txtNewPass.getText()) ) {
+                                /*VALIDA QUE LA CONTRASEÑA SEA DE 8 CARACTERES*/
+                                if( txtNewPass.getText().length() == 8 ) {
+                                    usuario.setClave(txtNewPass.getText());
+
+                                    usuario.Editar();
+                                    FullBuster.despatch.afirmacion(this, "Contraseña Guardada con Exito", "RECUPERACION");
+                                } else {
+                                    FullBuster.despatch.error(this, "La contraseña debe tener una longitud de 8 caracteres");
+                                }
+                            } else {
+                                FullBuster.despatch.error(this, "La contraseña debe esta formada por una combinacion de numeros y caracteres");
+                            }
+                        } else {
+                            FullBuster.despatch.error(this, "Respuesta Incorrecta");
+                        }
+                    } else {
+                        FullBuster.despatch.error(this, "La pregunta elegida no coincide");
+                    }
+                } else {
+                    FullBuster.despatch.error(this, "Usuario No Valido");
+                }
+            } catch( SQLException | ClassNotFoundException e ) {
+                FullBuster.despatch.error(this, e.toString());
+            }
+        }
+    }//GEN-LAST:event_btnRecuperarActionPerformed
+
+    private void txtPasswordKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPasswordKeyTyped
+        FullBuster.componentHandling.validarTextField(3, txtPassword, evt, 8);
+    }//GEN-LAST:event_txtPasswordKeyTyped
 
     /**
      * @param args the command line arguments

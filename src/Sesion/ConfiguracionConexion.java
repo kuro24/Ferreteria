@@ -10,6 +10,9 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 /**
  *
@@ -22,6 +25,9 @@ public class ConfiguracionConexion extends javax.swing.JDialog {
         initComponents();
         
         FullBuster.formDesign.designDialog("Configuracion de Red", this, jPanel1, false);
+        FullBuster.formDesign.fontButton( new JButton[]{btnEditar, btnGuardar, btnNuevo, btnSalir} );
+        FullBuster.formDesign.fontLabel( new JLabel[]{jLabel1, jLabel2, jLabel3, jLabel4} );
+        FullBuster.formDesign.fontTextField( new JTextField[]{txtUrl, ptxtPass, ptxtUser} );
     }
     
     public void habilitarCamposTexto( boolean habilitar ) {
@@ -68,28 +74,40 @@ public class ConfiguracionConexion extends javax.swing.JDialog {
 
         jLabel4.setText("Contraseña de la Base de Datos:");
 
+        btnNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/Nuevo.png"))); // NOI18N
+        btnNuevo.setMnemonic('N');
         btnNuevo.setText("Nuevo");
+        btnNuevo.setToolTipText("Cree una nueva conexion");
         btnNuevo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNuevoActionPerformed(evt);
             }
         });
 
+        btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/Editar.png"))); // NOI18N
+        btnEditar.setMnemonic('E');
         btnEditar.setText("Editar");
+        btnEditar.setToolTipText("Edite la conexion actual");
         btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditarActionPerformed(evt);
             }
         });
 
+        btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/Guardar.png"))); // NOI18N
+        btnGuardar.setMnemonic('G');
         btnGuardar.setText("Guardar");
+        btnGuardar.setToolTipText("Guarde la conexion actual");
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGuardarActionPerformed(evt);
             }
         });
 
-        btnSalir.setText("Salir");
+        btnSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/Salir.png"))); // NOI18N
+        btnSalir.setMnemonic('C');
+        btnSalir.setText("Cerrar");
+        btnSalir.setToolTipText("Cerrar ventana");
         btnSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSalirActionPerformed(evt);
@@ -106,22 +124,21 @@ public class ConfiguracionConexion extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtUrl, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnGuardar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
-                        .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(ptxtPass)
+                    .addComponent(ptxtUser)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel4)
                             .addComponent(jLabel3)
                             .addComponent(jLabel1))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(ptxtUser))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+                        .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(

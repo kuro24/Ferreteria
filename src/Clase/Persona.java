@@ -1,14 +1,16 @@
 package Clase;
 
+import SqlHelper.Sql;
 import java.util.Calendar;
 
 /**
  *
  * @author manuel
  */
-public abstract class Persona {
+public abstract class Persona implements Sql {
     
     private int numPersona;
+    private String cedulaRuc;
     private String nombre;
     private String apellidoRazonSocial;
     private String fechaNacimientoConstitucion;
@@ -24,6 +26,14 @@ public abstract class Persona {
 
     public void setNumPersona(int numPersona) {
         this.numPersona = numPersona;
+    }
+
+    public String getCedulaRuc() {
+        return cedulaRuc;
+    }
+
+    public void setCedulaRuc(String cedulaRuc) {
+        this.cedulaRuc = cedulaRuc;
     }
 
     public String getNombre() {

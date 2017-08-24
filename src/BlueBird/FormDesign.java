@@ -10,6 +10,7 @@ import java.awt.Toolkit;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -132,6 +133,12 @@ public class FormDesign {
     public static void fontTextField( JTextField[] textField ) {
         for ( JTextField thisText : textField ) {
             thisText.setFont(new Font(FONT, Font.PLAIN, 14));
+        }
+    }
+    
+    public static void fontComponents( JComponent[] comp ) {
+        for ( JComponent thisComp : comp ) {
+            thisComp.setFont(new Font(FONT, Font.PLAIN, 14));
         }
     }
 }
